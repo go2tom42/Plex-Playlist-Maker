@@ -1,4 +1,4 @@
-"Order","Source","Type","Canon","LiveAction","YearMade","PlexTitle","Episode","EpisodeName","StoryTime","PlexId"
+"Order","Source","Type","Category","LiveAction","YearMade","PlexTitle","Episode","EpisodeName","StoryTime","PlexId"
 001,,"Film","OtherFilms","True","1985","Red Sonja",,,"-10000","NULL"
 002,,"Film","KingsmanFilms","True","2021","The King's Man",,,"1902","NULL"
 003,"ABC","Show","MCUPLUS","True","2020","Marvel's Agents of S.H.I.E.L.D.","s07e01","The New Deal","1931","NULL"
