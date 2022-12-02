@@ -29,7 +29,7 @@ After editing the above section you can use Get-MA-Tokens.ps1 to get Tokens for 
 
 
 
+Get-AllPlexPlaylists.ps1 dumps all playlists to seperate CSV files that can be shared with others (Use Set-PlexPlaylist.ps1 to install, DUH)  
+
+
 Powershell 5.1 screws with titles that have non english characters, use Powershell 7 
-
-
-Get-AllPlexPlaylists.ps1 dumps all playlists to seperate CSV files that can be shared with others (Use Set-PlexPlaylist.ps1 to install, DUH)
