@@ -19,3 +19,6 @@ Set-PlexPlaylist.ps1, Get-AllPlexPlaylists.ps1, $ Get-MA-Tokens.ps1 contain this
 The UserToken it used for [Managed Accounts](https://support.plex.tv/articles/203948776-managed-users/)  
 You can get the Main Token [THIS WAY](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)  
 After editing the above section you can use Get-MA-Tokens.ps1 to get Tokens for Managed Accounts
+
+
+Powershell 5.1 screws with titles that have non english characters, use Powershell 7 
