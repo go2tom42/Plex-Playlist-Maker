@@ -23,7 +23,7 @@ After editing the above section you can use Get-MA-Tokens.ps1 to get Tokens for 
 
 ## Usage
 
-    .\Set-PlexPlaylist.ps1 [-File Path to CSV file] [-T Playlist Name/Title] [-q No questions, all titles from CSV added to playlist*]
+    .\Set-PlexPlaylist.ps1 [-File Path to CSV file] [-T Playlist Name/Title] [-q No questions, all titles from CSV added to one playlist*]
 
 \* Assuming you have the titles on your server  
 
