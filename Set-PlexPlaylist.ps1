@@ -24,27 +24,27 @@ $DefaultPlexServer = [pscustomobject]@{
 
 <# Can Change #>
 $Posters = @(
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU00.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU01.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU02.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU03.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU04.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU05.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU06.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU07.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU08.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU09.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU10.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU11.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU12.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU13.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU14.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU15.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU16.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU17.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU18.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU19.jpg";
-    "https://github.com/go2tom42/Marvel-Plex-Playlist-Maker/raw/master/MCU20.jpg"
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist00.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist01.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist02.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist03.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist04.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist05.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist06.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist07.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist08.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist09.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist10.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist11.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist12.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist13.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist14.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist15.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist16.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist17.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist18.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist19.png";
+    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist20.png"
 )
 
 <# NEVER CHANGE#>
