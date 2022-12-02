@@ -1,10 +1,10 @@
 <# MUST CHANGE #>
 $DefaultPlexServer = [pscustomobject]@{
-    Username           = "go2tom42";
-    Token              = "sVbduUbv4-x2DxzydRmx";
-    UserToken          = "PVy3fuX4q2UvjXi3_ijQ"; <#Only needed if you use Managed Accounts PVy3fuX4q2UvjXi3_ijQ #>
+    Username           = "Username";
+    Token              = "Token";
+    UserToken          = ""; <#Only needed if you use a Managed Account#>
     PlexServer         = "Smeghead";
-    PlexServerHostname = "192.168.1.88";
+    PlexServerHostname = "192.168.11.188";
     Protocol           = "http";
     Port               = "32400";
     Default            = "True";
