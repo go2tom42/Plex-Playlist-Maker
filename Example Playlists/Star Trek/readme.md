@@ -1,0 +1,21 @@
+    $Posters = @(
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek00.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek01.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek02.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek03.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek04.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek05.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek06.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek07.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek08.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek09.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek10.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek11.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek12.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek13.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek14.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek15.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek16.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek17.jpg";
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/Example%20Playlists/Star%20Trek/StarTrek18.jpg"
+    )
