@@ -25,9 +25,11 @@ After editing the above section you can use Get-MA-Tokens.ps1 to get Tokens for 
 
     .\Set-PlexPlaylist.ps1 [-File Path to CSV file] [-T Playlist Name/Title] [-q No questions, all titles from CSV added to playlist*]
 
+\* Assuming you have the titles on your server  
+
+
 
 Powershell 5.1 screws with titles that have non english characters, use Powershell 7 
 
-\* Assuming you have the titles on your server
 
 Get-AllPlexPlaylists.ps1 dumps all playlists to seperate CSV files that can be shared with others (Use Set-PlexPlaylist.ps1 to install, DUH)
