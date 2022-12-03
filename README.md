@@ -3,7 +3,7 @@
 Some info in the Wiki section
 
 
-Set-PlexPlaylist.ps1, Get-AllPlexPlaylists.ps1, $ Get-MA-Tokens.ps1 ALL contain this section that has to be updated by you  
+Set-PlexPlaylist.ps1, Get-AllPlexPlaylists.ps1, & Get-MA-Tokens.ps1 ALL contain this section that has to be updated by you  
   
     $DefaultPlexServer = [pscustomobject]@{
      Username = "Username";
