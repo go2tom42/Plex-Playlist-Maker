@@ -51,10 +51,8 @@ $DefaultPlexServer.PlexServer = ($GetServerName.Content | ConvertFrom-Json).Medi
 $getmachineIdentifier = Invoke-RestMethod -Uri "https://plex.tv/api/servers`?`X-Plex-Token=$($DefaultPlexServer.Token)" -Method GET -UseBasicParsing
 $DefaultPlexServer.machineIdentifier = ($getmachineIdentifier.MediaContainer.Server | Where-Object { $_.name -eq $DefaultPlexServer.PlexServer }).machineIdentifier
 
-
 $Data = Invoke-RestMethod -Uri "https://plex.tv/api/servers/$($DefaultPlexServer.machineIdentifier)/access_tokens.xml?auth_token=$($DefaultPlexServer.Token)&includeProviders=1" -ErrorAction Stop
 $TempUserList = $Data.access_tokens.access_token | Where-Object { $_.allow_sync }
-
 
 $UserList = @()
 foreach ($item in $TempUserList) {
@@ -73,7 +71,4 @@ elseif ($IsLinux -or $IsMacOS) {
 }
 
 New-Item -ItemType Directory -Path (Split-Path $ConfigFile) -ErrorAction SilentlyContinue | Out-Null
-
-
 ConvertTo-Json -InputObject $DefaultPlexServer | Out-File -FilePath $ConfigFile -Force -ErrorAction Stop
-
