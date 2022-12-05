@@ -10,46 +10,64 @@ Param(
     $PlaylistName = "Marvel / MCU",
     [parameter(Mandatory = $false)]
     [Switch]
-    $quick
+    $quick,
+    [parameter(Mandatory = $false)]
+    [String]
+    $Poster,
+    [parameter(Mandatory = $false)]
+    [String]
+    $user
 )
 
-<# MUST CHANGE #>
-$DefaultPlexServer = [pscustomobject]@{
-    Username           = "Username";
-    Token              = "Token";
-    UserToken          = ""; <#Only needed if you use a Managed Account#>
-    PlexServer         = "Smeghead";
-    PlexServerHostname = "192.168.11.188";
-    Protocol           = "http";
-    Port               = "32400";
-    Default            = "True";
+$Poster
+pause
+
+if ($IsWindows -or ( [version]$PSVersionTable.PSVersion -lt [version]"5.99.0" )) { $ConfigFile = "$env:appdata\PlexPlaylist\PlexPlaylist.json" } elseif ($IsLinux -or $IsMacOS) { $ConfigFile = "$HOME/.PlexPlaylist/PlexPlaylist.json" }
+
+if (Test-Path -Path $ConfigFile) {
+    $DefaultPlexServer = Get-Content -Path $ConfigFile -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+}
+else {
+    Clear-Host
+    Write-Host "Run Set-PlexPlaylist-Config.ps1"
+    Pause
+    Exit
 }
 
+if ($user) {
+    $DefaultPlexServer.UserToken = ($DefaultPlexServer.users | Where-Object { $_.Title -eq $user }).Token
+}
 
-<# Can Change #>
-$Posters = @(
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist00.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist01.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist02.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist03.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist04.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist05.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist06.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist07.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist08.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist09.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist10.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist11.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist12.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist13.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist14.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist15.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist16.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist17.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist18.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist19.png";
-    "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist20.png"
-)
+if ($Poster) {
+    Write-Host "true"
+    $Posters = Get-Content -Path $Poster -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+} 
+
+If (-not($Poster)) {
+    $Posters = '[
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist00.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist01.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist02.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist03.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist04.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist05.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist06.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist07.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist08.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist09.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist10.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist11.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist12.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist13.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist14.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist15.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist16.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist17.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist18.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist19.png",
+        "https://github.com/go2tom42/Plex-Playlist-Maker/raw/master/playlist20.png"
+      ]' | ConvertFrom-Json
+}
 
 <# NEVER CHANGE#>
 $global:LiveAction = "False"
@@ -84,25 +102,24 @@ function Show-PlexArt {
 }
 
 function playALL {
-    [array]$CurrentPlexServer = ((Invoke-RestMethod -Uri "https://plex.tv/api/servers`?`X-Plex-Token=$($DefaultPlexServer.Token)" -Method GET -UseBasicParsing).MediaContainer.Server) | Where-Object { $_.name -eq $DefaultPlexServer.PlexServer }
     $Results = Questiontime
     $ItemsToAdd = $Results.PlexID -join ','
     $PlaylistTitle = ([uri]::EscapeDataString($PlaylistName))
     if ($DefaultPlexServer.UserToken -eq "") {
         Write-Host -ForegroundColor DarkCyan "`nScript now creating said playlist."
         # create playlist, and fill it
-        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"
+        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"
         # Get New Playlist ID
         $PlaylistID = $Data.MediaContainer.Playlist.ratingKey
         #Set Poster
         Write-Host -ForegroundColor DarkCyan "`nScript now installing playlist poster."
-        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($PlaylistID)/posters?url=$([uri]::EscapeDataString($00Poster))&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"    
+        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($PlaylistID)/posters?url=$([uri]::EscapeDataString($($Posters[0])))&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"    
     }
 
     if (-not($DefaultPlexServer.UserToken -eq "")) {
         Write-Host -ForegroundColor DarkCyan "`nScript now creating said playlist."
         # create playlist, and fill it
-        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"        
+        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"        
         # Get New Playlist ID
         $PlaylistID = $Data.MediaContainer.Playlist.ratingKey
         #Set Poster
@@ -113,7 +130,6 @@ function playALL {
 }
 
 function play50 {
-    [array]$CurrentPlexServer = ((Invoke-RestMethod -Uri "https://plex.tv/api/servers`?`X-Plex-Token=$($DefaultPlexServer.Token)" -Method GET -UseBasicParsing).MediaContainer.Server) | Where-Object { $_.name -eq $DefaultPlexServer.PlexServer }
     $Results = Questiontime
     $PlaylistTitle = ([uri]::EscapeDataString($PlaylistName))
 
@@ -124,7 +140,7 @@ function play50 {
             Write-Host -ForegroundColor DarkCyan "`nScript now creating playlist $($i) and installing poster."; 
             $ItemsToAdd = ($Results.PlexID | Select-Object -First 50 -skip (($i - 1) * 50)) -join ","; 
             #set & create playlist
-            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"; 
+            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"; 
             #Get Playlist ID
             $PlaylistID = $Data.MediaContainer.Playlist.ratingKey; 
             #set playlist thumbnail
@@ -136,7 +152,7 @@ function play50 {
         for ($i = 1; $i -le $numplaylists; $i++) {
             Write-Host -ForegroundColor DarkCyan "`nScript now creating playlist $($i) and installing poster."; 
             $ItemsToAdd = ($Results.PlexID | Select-Object -First 50 -skip (($i - 1) * 50)) -join ","; 
-            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"; 
+            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"; 
             $PlaylistID = $Data.MediaContainer.Playlist.ratingKey; 
             $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($PlaylistID)/posters?url=$([uri]::EscapeDataString($($Posters[$i])))&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST" 
         }
@@ -144,11 +160,8 @@ function play50 {
 }   
 
 function play100 {
-    [array]$CurrentPlexServer = ((Invoke-RestMethod -Uri "https://plex.tv/api/servers`?`X-Plex-Token=$($DefaultPlexServer.Token)" -Method GET -UseBasicParsing).MediaContainer.Server) | Where-Object { $_.name -eq $DefaultPlexServer.PlexServer }
     $Results = Questiontime
     $PlaylistTitle = ([uri]::EscapeDataString($PlaylistName))
-
-
 
     $numplaylists = [math]::ceiling($Results.count / 100)
     if ($DefaultPlexServer.UserToken -eq "") {
@@ -157,7 +170,7 @@ function play100 {
             $i
             $ItemsToAdd = ($Results.PlexID | Select-Object -First 100 -skip (($i - 1) * 100)) -join ","; 
             #set & create playlist
-            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"; 
+            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"; 
             #Get Playlist ID
             $PlaylistID = $Data.MediaContainer.Playlist.ratingKey; 
             #set playlist thumbnail
@@ -169,7 +182,7 @@ function play100 {
         for ($i = 1; $i -le $numplaylists; $i++) {
             Write-Host -ForegroundColor DarkCyan "`nScript now creating playlist $($i) and installing poster."; 
             $ItemsToAdd = ($Results.PlexID | Select-Object -First 100 -skip (($i - 1) * 100)) -join ","; 
-            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"; 
+            $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$($PlaylistTitle)%20$i&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"; 
             $PlaylistID = $Data.MediaContainer.Playlist.ratingKey; 
             $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($PlaylistID)/posters?url=$([uri]::EscapeDataString($($Posters[$i])))&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST" 
         }
@@ -375,7 +388,6 @@ function mainMenu {
 
 function Get-Quick {
     Get-PlexIDs
-    [array]$CurrentPlexServer = ((Invoke-RestMethod -Uri "https://plex.tv/api/servers`?`X-Plex-Token=$($DefaultPlexServer.Token)" -Method GET -UseBasicParsing).MediaContainer.Server) | Where-Object { $_.name -eq $DefaultPlexServer.PlexServer }
     $categoryList = get-categoryList-Content
     foreach ($item in $categoryList) {
         $item.Status = "True"
@@ -396,7 +408,7 @@ function Get-Quick {
     if ($DefaultPlexServer.UserToken -eq "") {
         Write-Host -ForegroundColor DarkCyan "`nScript now creating said playlist."
         # create playlist, and fill it
-        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"
+        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST"
         # Get New Playlist ID
         $PlaylistID = $Data.MediaContainer.Playlist.ratingKey
         #Set Poster
@@ -407,7 +419,7 @@ function Get-Quick {
     if (-not($DefaultPlexServer.UserToken -eq "")) {
         Write-Host -ForegroundColor DarkCyan "`nScript now creating said playlist."
         # create playlist, and fill it
-        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($CurrentPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"        
+        $Data = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists?uri=server://$($DefaultPlexServer.machineIdentifier)/com.plexapp.plugins.library/library/metadata/$ItemsToAdd&title=$PlaylistTitle&smart=0&type=video&X-Plex-Token=$($DefaultPlexServer.UserToken)" -Method "POST"        
         # Get New Playlist ID
         $PlaylistID = $Data.MediaContainer.Playlist.ratingKey
         #Set Poster

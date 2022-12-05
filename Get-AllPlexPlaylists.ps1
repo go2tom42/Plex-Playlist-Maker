@@ -1,21 +1,18 @@
-﻿<# MUST CHANGE #>
-$DefaultPlexServer = [pscustomobject]@{
-    Username           = "go2tom42";
-    Token              = "sVbduUbv4-x2DxzydRmx";
-    UserToken          = "PVy3fuX4q2UvjXi3_ijQ"; <#Only needed if you use Managed Accounts PVy3fuX4q2UvjXi3_ijQ #>
-    PlexServer         = "Smeghead";
-    PlexServerHostname = "192.168.1.88";
-    Protocol           = "http";
-    Port               = "32400";
-    Default            = "True";
+﻿
+if ($IsWindows -or ( [version]$PSVersionTable.PSVersion -lt [version]"5.99.0" )) { $ConfigFile = "$env:appdata\PlexPlaylist\PlexPlaylist.json" } elseif ($IsLinux -or $IsMacOS) { $ConfigFile = "$HOME/.PlexPlaylist/PlexPlaylist.json" }
+
+if (Test-Path -Path $ConfigFile) {
+    $DefaultPlexServer = Get-Content -Path $ConfigFile -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+}
+else {
+    Clear-Host
+    Write-Host "Run Set-PlexPlaylist-Config.ps1"
+    Pause
+    Exit
 }
 
-
-<# NEVER CHANGE#>
-
-
-function Get-AllPlaylists {
-    if ($DefaultPlexServer.UserToken -eq "") { $Token = $DefaultPlexServer.Token } else { $Token = $DefaultPlexServer.UserToken }
+function Get-AllPlaylists($token, $user) {
+    
     $Data = Invoke-WebRequest -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/playlists/$Id`?`X-Plex-Token=$($Token)" -ErrorAction Stop -UseBasicParsing -Headers (@{"Accept" = "application/json, text/plain, */*" })
     $UTF8String = [system.Text.Encoding]::UTF8.GetString($Data.RawContentStream.ToArray())
     [array]$Results = ($UTF8String | ConvertFrom-Json).MediaContainer.Metadata
@@ -48,8 +45,16 @@ function Get-AllPlaylists {
                 PlexId      = "NULL"
             }
         }
-        $test | Export-Csv  -Path ".\$csvfilename.csv" -Encoding UTF8 -NoTypeInformation
+        $test | Export-Csv  -Path ".\$user-$csvfilename.csv" -Encoding UTF8 -NoTypeInformation
     }
         
 }
-Get-AllPlaylists
+Get-AllPlaylists ($DefaultPlexServer.Token) ($DefaultPlexServer.Username)
+
+$users = $DefaultPlexServer.Users
+
+foreach ($item in $users) {
+    $Token = $item.Token
+    $user = $item.title 
+    Get-AllPlaylists $token $user
+}
