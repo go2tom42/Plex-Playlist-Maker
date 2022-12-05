@@ -74,4 +74,7 @@ Set-PlexPlaylist-Config
 Get-AllPlexPlaylists.ps1 dumps all playlists for all users to seperate CSV files that can be shared with others (Use Set-PlexPlaylist.ps1 to install, DUH)  
 
 
-Powershell 5.1 screws with titles that have non english characters, use Powershell 7 
+Powershell 5.1 screws with titles that have non english characters, use Powershell 7   
+
+
+Stole a lot from https://github.com/robinmalik/PSPlex to make this work
