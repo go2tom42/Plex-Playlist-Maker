@@ -1,5 +1,4 @@
 
-[CmdletBinding(DefaultParameterSetName = 'TokenFromGetPlexAuthenticationToken')]
 param(
     [Parameter(Mandatory = $false)]
     [String]
