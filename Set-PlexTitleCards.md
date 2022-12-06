@@ -1,3 +1,4 @@
+Requires running Set-PlexPlaylist-Config.ps1 before using  
 
 ## Usage
 ```
