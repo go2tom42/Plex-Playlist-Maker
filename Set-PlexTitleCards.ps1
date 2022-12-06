@@ -1,4 +1,3 @@
-
 param(
     [Parameter(Mandatory = $false)]
     [String]
@@ -6,9 +5,13 @@ param(
 
     [Parameter(Mandatory = $false)]
     [String]
-    $NAME
-)
+    $NAME,
 
+    [Parameter(Mandatory = $false)]
+    [Switch]
+    $COMPRESS
+)
+$PATH = "d:\WORK\FUCK\"; $NAME = "Loki"
 if ($IsWindows -or ( [version]$PSVersionTable.PSVersion -lt [version]"5.99.0" )) { $ConfigFile = "$env:appdata\PlexPlaylist\PlexPlaylist.json" } elseif ($IsLinux -or $IsMacOS) { $ConfigFile = "$HOME/.PlexPlaylist/PlexPlaylist.json" }
 
 if (Test-Path -Path $ConfigFile) {
@@ -35,9 +38,13 @@ $path = "$((Get-ChildItem -Path $PATH).DirectoryName[0])\*"
 
 $ImageList = Get-ChildItem -Path $PATH -Include ("*.jpg", "*.png") -ErrorAction SilentlyContinue -Force | Sort-Object
 foreach ($file in $ImageList) {
-    $episode = (([regex]::matches($file.name, '[sS]?(?<season>\d{1,2})[ xXeE]+(?<episode>\d{1,2})')).Value)
-    $file | Add-Member  -NotePropertyName Season -NotePropertyValue ($episode.substring(1, 2))
-    $file | Add-Member  -NotePropertyName Episode -NotePropertyValue ($episode.substring(4, 2))
+    if ($COMPRESS) {
+        $AGGS = "-copy none -optimize -outfile `"$($file.FullName)`" `"$($file.FullName)`""
+        Start-Process "jpegtran" -ArgumentList $AGGS -wait -PassThru -NoNewWindow
+    }
+    $episode = (([regex]::matches($file.name, '[sS]?(?<season>\d{1,2})[ xXeE]+(?<episode>\d{1,2})')))
+    $file | Add-Member  -NotePropertyName Episode -NotePropertyValue (($episode.Groups | where-object { $_.Name -eq "episode" }).value)
+    $file | Add-Member  -NotePropertyName Season -NotePropertyValue (($episode.Groups | where-object { $_.Name -eq "season" }).value)
 }
 
 Write-Host -ForegroundColor DarkCyan "`nScript executing, looking for PlexIDs."
