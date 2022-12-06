@@ -39,8 +39,7 @@ $path = "$((Get-ChildItem -Path $PATH).DirectoryName[0])\*"
 $ImageList = Get-ChildItem -Path $PATH -Include ("*.jpg", "*.png") -ErrorAction SilentlyContinue -Force | Sort-Object
 foreach ($file in $ImageList) {
     if ($COMPRESS) {
-        $AGGS = "-copy none -optimize -outfile `"$($file.FullName)`" `"$($file.FullName)`""
-        Start-Process "jpegtran" -ArgumentList $AGGS -wait -PassThru -NoNewWindow
+        Start-Process "jpegtran" -ArgumentList ("-copy none -optimize -outfile `"$($file.FullName)`" `"$($file.FullName)`"") -wait -PassThru -NoNewWindow
     }
     $episode = (([regex]::matches($file.name, '[sS]?(?<season>\d{1,2})[ xXeE]+(?<episode>\d{1,2})')))
     $file | Add-Member  -NotePropertyName Episode -NotePropertyValue (($episode.Groups | where-object { $_.Name -eq "episode" }).value)
@@ -59,6 +58,8 @@ foreach ($tvItem in $showlibs) {
 $newtvdata += $tvdata | Where-Object { $_.grandparentTitle -eq $NAME }
 
 foreach ($item in $ImageList) {
+    Write-Host -ForegroundColor DarkCyan "`nScript now installing Poster for Season $($item.season) Episode $($item.episode)"
     $ratingkey = ($newtvdata | Where-Object { ($_.index -eq [decimal]$($item.episode)) -and ($_.parentIndex -eq [decimal]$($item.season)) }).ratingKey
     Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($ratingkey)/posters?includeExternalMedia=1&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST" -InFile "$($item.FullName)"
 }
+Write-Host -ForegroundColor DarkCyan "`nScript now done"
