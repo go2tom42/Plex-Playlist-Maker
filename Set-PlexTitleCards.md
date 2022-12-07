@@ -14,4 +14,4 @@ Images file names must contains season and episode info in the format of S01E01,
 
 For a Season one poster use S01E00, season two S02E00, etc   
 For the "Special Season" use S00E00  
-For Series poseter use S99E00  
+For Series poster use S99E00  
