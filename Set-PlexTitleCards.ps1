@@ -58,8 +58,32 @@ foreach ($tvItem in $showlibs) {
 $newtvdata += $tvdata | Where-Object { $_.grandparentTitle -eq $NAME }
 
 foreach ($item in $ImageList) {
-    Write-Host -ForegroundColor DarkCyan "`nScript now installing Poster for Season $($item.season) Episode $($item.episode)"
-    $ratingkey = ($newtvdata | Where-Object { ($_.index -eq [decimal]$($item.episode)) -and ($_.parentIndex -eq [decimal]$($item.season)) }).ratingKey
-    Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($ratingkey)/posters?includeExternalMedia=1&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST" -InFile "$($item.FullName)"
+    if ([decimal]$item.episode -eq '0' ) {
+
+        if (($item.season -ge 0) -and ($item.season -lt 99)) {
+            Write-Host -ForegroundColor DarkCyan "`nScript now installing Poster for Season $($item.season) Episode $($item.episode)"
+            $tempratingkey = ($newtvdata | Where-Object { ($_.parentIndex -eq [decimal]$item.season) }) 
+            if ($tempratingkey -is [array] ) {
+                $ratingkey = $tempratingkey[0].parentRatingKey
+                Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($ratingkey)/posters?includeExternalMedia=1&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST" -InFile "$($item.FullName)" 
+            }
+        }
+        if ($item.season -eq 99) {
+            Write-Host -ForegroundColor DarkCyan "`nScript now installing Poster for Season $($item.season) Episode $($item.episode)"
+            $tempratingkey = ($newtvdata | Where-Object { ($_.parentIndex -gt .9) })
+            if ($tempratingkey -is [array] ) {
+                $ratingkey = $tempratingkey[0].grandparentRatingKey 
+                Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($ratingkey)/posters?includeExternalMedia=1&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST" -InFile "$($item.FullName)" 
+            }
+        }
+    } 
+    if ([decimal]$item.episode -gt '0') {
+        Write-Host -ForegroundColor DarkCyan "`nScript now installing Poster for Season $($item.season) Episode $($item.episode)"
+        $ratingkey = (($newtvdata | Where-Object { ($_.index -eq [decimal]$($item.episode)) -and ($_.parentIndex -eq [decimal]$($item.season)) }).ratingKey ) 
+        if ($ratingkey -gt 0) { 
+            Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/metadata/$($ratingkey)/posters?includeExternalMedia=1&X-Plex-Token=$($DefaultPlexServer.Token)" -Method "POST" -InFile "$($item.FullName)"
+        }
+    }
 }
+
 Write-Host -ForegroundColor DarkCyan "`nScript now done"
