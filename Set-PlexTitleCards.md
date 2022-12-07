@@ -10,4 +10,8 @@ Set-PlexTitleCards
 Script grabs PlexIDs for Show title given that also matches the season and episode from image file name, then uploads that image to your Plex server  
 
 
-Images file names must contains season and episode info in the format of S01E01, not case senitive 
+Images file names must contains season and episode info in the format of S01E01, not case senitive  
+
+For a Season one poster use S01E00, season two S02E00, etc   
+For the "Special Season" use S00E00  
+For Series poseter use S99E00  
