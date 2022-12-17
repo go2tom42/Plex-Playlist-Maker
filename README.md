@@ -22,6 +22,8 @@ Look over Set-PlexPlaylist-Config.ps1 you will see all data stays between your P
   "Username": "dabom42",
   "Token": "sVb27591de98a93ydRmx",
   "UserToken": "",
+  "ToUserToken": "",
+  "FromUserToken": "",
   "Title": "dabom42",
   "PlexServer": "Aname",
   "PlexServerHostname": "192.168.24.188",
