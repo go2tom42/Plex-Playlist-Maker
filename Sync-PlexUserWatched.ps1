@@ -1,25 +1,38 @@
 <# Can Change #>
 Param(
     [parameter(Mandatory = $false)]
-    [ValidateSet('Watched', 'Unwatched', 'All')]
-    [String]
-    $Mode = "Watched",
+    [Switch]$progress = $false,
     [parameter(Mandatory = $false)]
-    [String]
-    $Days,
+    [Switch]$watched = $false,
     [parameter(Mandatory = $false)]
-    [String]
-    $ToUser,
+    [Switch]$unwatched = $false,
     [parameter(Mandatory = $false)]
-    [String]
-    $FromUser
+    [Switch]$all = $false,
+    [parameter(Mandatory = $false)]
+    [String]$Days,
+    [parameter(Mandatory = $false)]
+    [String]$ToUser,
+    [parameter(Mandatory = $false)]
+    [String]$FromUser
 )
 
+if (($progress -eq $false) -and ($progress -eq $false) -and ($watched -eq $false) -and ($unwatched -eq $false) -and ($all -eq $false)) {
+    Write-Host "inside 1st if"
+    $watched = $true
+}
+
+if ($all) {
+    Write-Host "inside 2nd if"
+    $watched = $true
+    $progress = $true
+    $unwatched = $true
+}
 
 if ($days) {
     $currenttime = [int](Get-Date -UFormat %s -Millisecond 0)
     $time = $currenttime - ([int]$Days * 86400)
 }
+
 
 if ($ToUser) { $ToUser = $ToUser } else { $ToUser = Read-Host -Prompt 'Destination Username' }
 if ($FromUser) { $FromUser = $FromUser } else { $FromUser = Read-Host -Prompt 'Source Username' }
@@ -53,6 +66,7 @@ if ($FromUser) {
         $DefaultPlexServer.FromUserToken = ($DefaultPlexServer.users | Where-Object { $_.Title -eq $FromUser }).Token
     }
 }
+
 Write-Host -ForegroundColor DarkCyan "`nScript now grabbing Plex Library list."
 $LibraryList = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/sections?X-Plex-Token=$($DefaultPlexServer.Token)" -Method "GET"
 $LibraryList = $LibraryList.MediaContainer.Directory
@@ -79,19 +93,24 @@ foreach ($Library in $LibraryList) {
 if ($time) {
     $FromUserDataWatched = ($FromUserData | where-object { $_.viewCount } | where-object { [int]$_.lastViewedAt -gt $time }).ratingKey
     $FromUserDataUnwatched = ($FromUserData | where-object { -not($_.viewCount) }).ratingKey
+    $FromUserDataProgress = ($FromUserData | where-object { $_.viewOffset } | where-object { [int]$_.lastViewedAt -gt $time })
 
     $ToUserDataWatched = ($ToUserData | where-object { $_.viewCount } | where-object { [int]$_.lastViewedAt -gt $time }).ratingKey
     $ToUserDataUnwatched = ($ToUserData | where-object { -not($_.viewCount) }).ratingKey
+    #$ToUserDataProgress = ($ToUserData | where-object { $_.viewOffset } | where-object { [int]$_.lastViewedAt -gt $time })
 }
 else {
     $FromUserDataWatched = ($FromUserData | where-object { $_.viewCount }).ratingKey
     $FromUserDataUnwatched = ($FromUserData | where-object { -not($_.viewCount) }).ratingKey
+    $FromUserDataProgress = ($FromUserData | where-object { $_.viewOffset })
 
     $ToUserDataWatched = ($ToUserData | where-object { $_.viewCount }).ratingKey
     $ToUserDataUnwatched = ($ToUserData | where-object { -not($_.viewCount) }).ratingKey
+    #$ToUserDataProgress = ($ToUserData | where-object { $_.viewOffset })
 }
 
-if ($Mode -eq "Watched") {
+
+if ($watched) {
     Write-Host -ForegroundColor DarkCyan "`nScript comparing $ToUser Watched list and $FromUser Watched list."
     $FromUserMinusToUserWatched = ($fromUserDataWatched | Where-Object { $ToUserDataWatched -NotContains $_ })
     Write-Host -ForegroundColor DarkCyan "`nScript updating $ToUser Watched list."
@@ -99,7 +118,8 @@ if ($Mode -eq "Watched") {
         Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/scrobble`?identifier=com.plexapp.plugins.library&key=$($item)&X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET" | Out-Null
     }
 }
-if ($Mode -eq "Unwatched") {
+
+if ($unwatched) {
     Write-Host -ForegroundColor DarkCyan "`nScript comparing $ToUser Unwatched list and $FromUser Unwatched list."
     $FromUserMinusToUserUnwatched = ($fromUserDataUnwatched | Where-Object { $ToUserDataUnwatched -NotContains $_ })
     Write-Host -ForegroundColor DarkCyan "`nScript updating $ToUser Unwatched list."
@@ -107,18 +127,17 @@ if ($Mode -eq "Unwatched") {
         Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/unscrobble`?identifier=com.plexapp.plugins.library&key=$($item)&X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET" | Out-Null
     }
 }
-if ($Mode -eq "All") {
-    Write-Host -ForegroundColor DarkCyan "`nScript comparing $ToUser Watched list and $FromUser Watched list."
-    $FromUserMinusToUserWatched = ($fromUserDataWatched | Where-Object { $ToUserDataWatched -NotContains $_ })
-    Write-Host -ForegroundColor DarkCyan "`nScript comparing $ToUser Unwatched list and $FromUser Unwatched list."
-    $FromUserMinusToUserUnwatched = ($fromUserDataUnwatched | Where-Object { $ToUserDataUnwatched -NotContains $_ })
-    Write-Host -ForegroundColor DarkCyan "`nScript updating $ToUser Unwatched list."
-    foreach ($item in $FromUserMinusToUserUnwatched) {
-        Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/unscrobble`?identifier=com.plexapp.plugins.library&key=$($item)&X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET" | Out-Null
-    }
-    Write-Host -ForegroundColor DarkCyan "`nScript updating $ToUser Watched list."
-    foreach ($item in $FromUserMinusToUserWatched) {
-        Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/scrobble`?identifier=com.plexapp.plugins.library&key=$($item)&X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET" | Out-Null
+
+if ($progress) {
+    foreach ($item in $FromUserDataProgress) {
+        Write-Host -ForegroundColor DarkCyan "`nScript fixing progress issues with Android TV."
+        if (([int]$item.viewOffset / [int]$item.duration) -ge .95) {
+            Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/scrobble`?identifier=com.plexapp.plugins.library&key=$($item.ratingKey)&X-Plex-Token=$($DefaultPlexServer.FromUserToken)" -Method "GET" | Out-Null
+            Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/scrobble`?identifier=com.plexapp.plugins.library&key=$($item.ratingKey)&X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET" | Out-Null
+        }
+        Write-Host -ForegroundColor DarkCyan "`nScript updating $ToUser's progress status to match $FromUser."
+        if (([int]$item.viewOffset / [int]$item.duration) -lt .95) {
+            Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/progress`?identifier=com.plexapp.plugins.library&key=$($item.ratingKey)&time=$($item.viewOffset)&X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET" | Out-Null
+        }
     }
 }
-Write-Host -ForegroundColor DarkCyan "`nScript is complete."
