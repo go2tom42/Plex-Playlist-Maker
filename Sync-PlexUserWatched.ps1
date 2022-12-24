@@ -9,6 +9,8 @@ Param(
     [parameter(Mandatory = $false)]
     [Switch]$all = $false,
     [parameter(Mandatory = $false)]
+    [Switch]$fix = $false,
+    [parameter(Mandatory = $false)]
     [String]$Days,
     [parameter(Mandatory = $false)]
     [String]$ToUser,
@@ -16,7 +18,7 @@ Param(
     [String]$FromUser
 )
 
-if (($progress -eq $false) -and ($progress -eq $false) -and ($watched -eq $false) -and ($unwatched -eq $false) -and ($all -eq $false)) {
+if (($progress -eq $false) -and ($progress -eq $false) -and ($watched -eq $false) -and ($unwatched -eq $false) -and ($all -eq $false) -and ($fix -eq $false)) {
     Write-Host "inside 1st if"
     $watched = $true
 }
@@ -33,9 +35,14 @@ if ($days) {
     $time = $currenttime - ([int]$Days * 86400)
 }
 
+if ($FromUser) { $FromUser = $FromUser } else { $FromUser = Read-Host -Prompt 'Source Username' }
+
+if ($fix) {
+    $ToUser = $FromUser
+}
 
 if ($ToUser) { $ToUser = $ToUser } else { $ToUser = Read-Host -Prompt 'Destination Username' }
-if ($FromUser) { $FromUser = $FromUser } else { $FromUser = Read-Host -Prompt 'Source Username' }
+
 
 if ($IsWindows -or ( [version]$PSVersionTable.PSVersion -lt [version]"5.99.0" )) { $ConfigFile = "$env:appdata\PlexPlaylist\PlexPlaylist.json" } elseif ($IsLinux -or $IsMacOS) { $ConfigFile = "$HOME/.PlexPlaylist/PlexPlaylist.json" }
 
@@ -67,14 +74,15 @@ if ($FromUser) {
     }
 }
 
+
 Write-Host -ForegroundColor DarkCyan "`nScript now grabbing Plex Library list."
 $LibraryList = Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/sections?X-Plex-Token=$($DefaultPlexServer.Token)" -Method "GET"
 $LibraryList = $LibraryList.MediaContainer.Directory
-
+    
 foreach ($Library in $LibraryList) {
     $RestError = $null
     Try {
-        Write-Host -ForegroundColor DarkCyan "`nScript now grabbing $ToUser Watched status in the $($Library.Title) Plex Library."
+        Write-Host -ForegroundColor DarkCyan "`nScript now grabbing $FromUser Watched status in the $($Library.Title) Plex Library."
         $FromUserData += ((Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/sections/$($Library.key)/allLeaves?X-Plex-Token=$($DefaultPlexServer.FromUserToken)" -Method "GET").MediaContainer.Video)
     }
     Catch {
@@ -82,13 +90,16 @@ foreach ($Library in $LibraryList) {
     }
     $RestError = $null
     Try {
-        Write-Host -ForegroundColor DarkCyan "`nScript now grabbing $FromUser Watched status in the $($Library.Title) Plex Library."
-        $ToUserData += ((Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/sections/$($Library.key)/allLeaves?X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET").MediaContainer.Video)
+        if (-not $fix) {
+            Write-Host -ForegroundColor DarkCyan "`nScript now grabbing $ToUser Watched status in the $($Library.Title) Plex Library."
+            $ToUserData += ((Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/library/sections/$($Library.key)/allLeaves?X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET").MediaContainer.Video)
+        }
     }
     Catch {
         $RestError = $_
     }
 }
+
 
 if ($time) {
     $FromUserDataWatched = ($FromUserData | where-object { $_.viewCount } | where-object { [int]$_.lastViewedAt -gt $time }).ratingKey
@@ -97,7 +108,6 @@ if ($time) {
 
     $ToUserDataWatched = ($ToUserData | where-object { $_.viewCount } | where-object { [int]$_.lastViewedAt -gt $time }).ratingKey
     $ToUserDataUnwatched = ($ToUserData | where-object { -not($_.viewCount) }).ratingKey
-    #$ToUserDataProgress = ($ToUserData | where-object { $_.viewOffset } | where-object { [int]$_.lastViewedAt -gt $time })
 }
 else {
     $FromUserDataWatched = ($FromUserData | where-object { $_.viewCount }).ratingKey
@@ -106,7 +116,6 @@ else {
 
     $ToUserDataWatched = ($ToUserData | where-object { $_.viewCount }).ratingKey
     $ToUserDataUnwatched = ($ToUserData | where-object { -not($_.viewCount) }).ratingKey
-    #$ToUserDataProgress = ($ToUserData | where-object { $_.viewOffset })
 }
 
 
@@ -138,6 +147,15 @@ if ($progress) {
         Write-Host -ForegroundColor DarkCyan "`nScript updating $ToUser's progress status to match $FromUser."
         if (([int]$item.viewOffset / [int]$item.duration) -lt .95) {
             Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/progress`?identifier=com.plexapp.plugins.library&key=$($item.ratingKey)&time=$($item.viewOffset)&X-Plex-Token=$($DefaultPlexServer.ToUserToken)" -Method "GET" | Out-Null
+        }
+    }
+}
+
+if ($fix) {
+    foreach ($item in $FromUserDataProgress) {
+        Write-Host -ForegroundColor DarkCyan "`nScript fixing progress issues with Android TV."
+        if (([int]$item.viewOffset / [int]$item.duration) -ge .95) {
+            Invoke-RestMethod -Uri "$($DefaultPlexServer.Protocol)`://$($DefaultPlexServer.PlexServerHostname)`:$($DefaultPlexServer.Port)/:/scrobble`?identifier=com.plexapp.plugins.library&key=$($item.ratingKey)&X-Plex-Token=$($DefaultPlexServer.FromUserToken)" -Method "GET" | Out-Null
         }
     }
 }
