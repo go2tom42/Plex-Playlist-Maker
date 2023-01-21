@@ -1,4 +1,4 @@
-<# Can Change #>
+
 Param(
     [parameter(Mandatory = $false)]
     [Switch]$progress = $false,
